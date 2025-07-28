@@ -22,6 +22,14 @@ sidebar = html.Div([
         style={"marginLeft": "0.5rem"}
     ),
     html.H4("Controls", className="mb-3"),
+    html.Label('Paste CSV Data:'),
+    dcc.Textarea(
+        id='csv-textarea',
+        placeholder='Paste CSV data here...',
+        style={'width': '100%', 'height': 100, 'marginBottom': '0.5rem'},
+    ),
+    dbc.Button('Load Pasted Data', id='load-csv-btn', color='primary', outline=True, size='sm', className='mb-2'),
+    html.Div(id='csv-textarea-info', className='text-muted mb-2'),
     dcc.Upload(
         id='upload-data',
         children=html.Div(['Drag and Drop or ', html.A('Select a CSV File')]),
@@ -115,12 +123,14 @@ content = html.Div([
     'marginLeft': '270px', 'padding': '2rem 1rem', 'transition': 'margin-left 0.3s'
 })
 
+# Store uploaded or pasted data in dcc.Store
 app.layout = html.Div([
     sidebar,
-    content
+    content,
+    dcc.Store(id='stored-df', storage_type='session'),
 ])
 
-# Helper: Parse uploaded file
+# Helper: Parse uploaded or pasted file
 def parse_contents(contents, filename):
     content_type, content_string = contents.split(',')
     decoded = base64.b64decode(content_string)
@@ -129,6 +139,13 @@ def parse_contents(contents, filename):
             df = pd.read_csv(io.StringIO(decoded.decode('utf-8')))
         else:
             return None, 'Unsupported file type.'
+    except Exception as e:
+        return None, f'Error: {str(e)}'
+    return df, None
+
+def parse_pasted_csv(text):
+    try:
+        df = pd.read_csv(io.StringIO(text))
     except Exception as e:
         return None, f'Error: {str(e)}'
     return df, None
@@ -177,46 +194,65 @@ def switch_theme(light, dark):
         app.external_stylesheets = [dbc.themes.BOOTSTRAP]
         return ''
 
-# Main dashboard callback
+# Callback to load pasted CSV data
 @app.callback(
-    [Output('file-info', 'children'),
-     Output('date-column', 'options'),
+    [Output('stored-df', 'data'), Output('csv-textarea-info', 'children'), Output('toast', 'is_open'), Output('toast', 'header'), Output('toast', 'children'), Output('toast', 'icon')],
+    Input('load-csv-btn', 'n_clicks'),
+    State('csv-textarea', 'value'),
+    prevent_initial_call=True
+)
+def load_pasted_csv(n_clicks, text):
+    if n_clicks and text:
+        df, err = parse_pasted_csv(text)
+        if err:
+            return None, err, True, 'Paste Error', err, 'danger'
+        return df.to_json(date_format='iso', orient='split'), 'Pasted data loaded!', True, 'Paste Success', 'Pasted data loaded!', 'success'
+    return dash.no_update, '', False, '', '', ''
+
+# Callback to load uploaded file (store in dcc.Store)
+@app.callback(
+    [Output('stored-df', 'data'), Output('file-info', 'children'), Output('toast', 'is_open'), Output('toast', 'header'), Output('toast', 'children'), Output('toast', 'icon')],
+    Input('upload-data', 'contents'),
+    State('upload-data', 'filename'),
+    prevent_initial_call=True
+)
+def load_uploaded_file(contents, filename):
+    if contents:
+        df, err = parse_contents(contents, filename)
+        if err:
+            return None, err, True, 'Upload Error', err, 'danger'
+        return df.to_json(date_format='iso', orient='split'), f'Loaded: {filename}', True, 'Upload Success', f'Loaded: {filename}', 'success'
+    return dash.no_update, '', False, '', '', ''
+
+# Main dashboard callback (use stored-df)
+@app.callback(
+    [Output('date-column', 'options'),
      Output('value-column', 'options'),
      Output('date-column', 'value'),
      Output('value-column', 'value'),
      Output('kpi-cards', 'children'),
      Output('main-graph', 'figure'),
-     Output('data-table', 'children'),
-     Output('toast', 'is_open'),
-     Output('toast', 'header'),
-     Output('toast', 'children'),
-     Output('toast', 'icon')],
-    [Input('upload-data', 'contents'),
+     Output('data-table', 'children')],
+    [Input('stored-df', 'data'),
      Input('chart-type', 'value'),
      Input('date-column', 'value'),
      Input('value-column', 'value'),
      Input('date-picker', 'start_date'),
      Input('date-picker', 'end_date')],
-    [State('upload-data', 'filename')]
 )
-def update_dashboard(contents, chart_type, date_col, value_col, start_date, end_date, filename):
-    if contents is None:
-        return '', [], [], None, None, '', {}, '', False, '', '', ''
-    df, err = parse_contents(contents, filename)
-    if err:
-        return err, [], [], None, None, '', {}, '', True, 'Upload Error', err, 'danger'
+def update_dashboard(data, chart_type, date_col, value_col, start_date, end_date):
+    if data is None:
+        return [], [], None, None, '', {}, ''
+    df = pd.read_json(data, orient='split')
     # Detect date and value columns
     date_options = [{'label': col, 'value': col} for col in df.select_dtypes(include=['datetime', 'object']).columns]
     value_options = [{'label': col, 'value': col} for col in df.select_dtypes(include=[np.number]).columns]
-    # Try to auto-select
     date_val = date_options[0]['value'] if date_options else None
     value_val = value_options[0]['value'] if value_options else None
-    # Filter by date
     if date_col and pd.api.types.is_datetime64_any_dtype(df[date_col]):
         if start_date and end_date:
             mask = (df[date_col] >= start_date) & (df[date_col] <= end_date)
             df = df.loc[mask]
-    # KPIs
     kpi_cards = dbc.Row([
         dbc.Col(dbc.Card([
             dbc.CardBody([
@@ -243,7 +279,6 @@ def update_dashboard(contents, chart_type, date_col, value_col, start_date, end_
             ])
         ]), width=3),
     ], className='my-2')
-    # Chart
     fig = {}
     if chart_type == 'line' and date_col and value_col:
         fig = px.line(df, x=date_col, y=value_col, title='Line Chart')
@@ -253,11 +288,9 @@ def update_dashboard(contents, chart_type, date_col, value_col, start_date, end_
         fig = px.pie(df, names=date_col if date_col else df.columns[0], values=value_col, title='Pie Chart')
     elif chart_type == 'heatmap' and value_col:
         fig = px.density_heatmap(df, x=date_col if date_col else df.columns[0], y=value_col, title='Heatmap')
-    # Tooltips
     if fig:
         fig.update_traces(hoverinfo='all', hovertemplate=None)
         fig.update_layout(transition_duration=500)
-    # Data Table
     table = dash_table.DataTable(
         columns=[{"name": i, "id": i} for i in df.columns],
         data=df.head(100).to_dict('records'),
@@ -276,7 +309,7 @@ def update_dashboard(contents, chart_type, date_col, value_col, start_date, end_
             }
         ]
     )
-    return f'Loaded: {filename}', date_options, value_options, date_val, value_val, kpi_cards, fig, table, True, 'Upload Success', f'Loaded: {filename}', 'success'
+    return date_options, value_options, date_val, value_val, kpi_cards, fig, table
 
 # Download callbacks with toast
 @app.callback(

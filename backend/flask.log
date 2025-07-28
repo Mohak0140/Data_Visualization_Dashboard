@@ -1,0 +1,402 @@
+nohup: ignoring input
+ * Serving Flask app 'app'
+ * Debug mode: on
+[31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on all addresses (0.0.0.0)
+ * Running on http://127.0.0.1:5001
+ * Running on http://172.30.0.2:5001
+[33mPress CTRL+C to quit[0m
+ * Restarting with watchdog (inotify)
+ * Debugger is active!
+ * Debugger PIN: 115-418-274
+ * Detected change in '/workspace/backend/app.py', reloading
+ * Detected change in '/workspace/backend/config.py', reloading
+ * Detected change in '/workspace/backend/test_api.py', reloading
+ * Detected change in '/workspace/backend/app.py', reloading
+ * Detected change in '/workspace/backend/config.py', reloading
+ * Detected change in '/workspace/backend/test_api.py', reloading
+ * Restarting with watchdog (inotify)
+ * Debugger is active!
+ * Debugger PIN: 115-418-274
+127.0.0.1 - - [28/Jul/2025 08:45:40] "GET / HTTP/1.1" 200 -
+ * Detected change in '/workspace/backend/test_api.py', reloading
+ * Detected change in '/workspace/backend/test_api.py', reloading
+ * Detected change in '/workspace/backend/test_api.py', reloading
+ * Detected change in '/workspace/backend/test_api.py', reloading
+ * Restarting with watchdog (inotify)
+ * Debugger is active!
+ * Debugger PIN: 115-418-274
+ * Detected change in '/workspace/backend/test_api.py', reloading
+ * Detected change in '/workspace/backend/test_api.py', reloading
+ * Restarting with watchdog (inotify)
+ * Debugger is active!
+ * Debugger PIN: 115-418-274
+127.0.0.1 - - [28/Jul/2025 08:45:47] "GET / HTTP/1.1" 200 -
+127.0.0.1 - - [28/Jul/2025 08:45:47] "POST /api/upload HTTP/1.1" 200 -
+127.0.0.1 - - [28/Jul/2025 08:45:47] "GET /api/data/test_data.csv_0?limit=10 HTTP/1.1" 200 -
+127.0.0.1 - - [28/Jul/2025 08:45:47] "POST /api/visualize HTTP/1.1" 200 -
+127.0.0.1 - - [28/Jul/2025 08:45:47] "POST /api/visualize HTTP/1.1" 200 -
+127.0.0.1 - - [28/Jul/2025 08:45:47] "GET /api/stats/test_data.csv_0 HTTP/1.1" 200 -
+127.0.0.1 - - [28/Jul/2025 08:45:47] "GET /api/datasets HTTP/1.1" 200 -
+ * Detected change in '/workspace/backend/test_api.py', reloading
+ * Detected change in '/workspace/backend/test_api.py', reloading
+ * Detected change in '/workspace/backend/test_api.py', reloading
+ * Detected change in '/workspace/backend/test_api.py', reloading
+ * Restarting with watchdog (inotify)
+ * Debugger is active!
+ * Debugger PIN: 115-418-274
+ * Detected change in '/workspace/backend/test_api.py', reloading
+ * Detected change in '/workspace/backend/test_api.py', reloading
+ * Detected change in '/workspace/backend/test_api.py', reloading
+ * Detected change in '/workspace/backend/test_api.py', reloading
+ * Restarting with watchdog (inotify)
+ * Debugger is active!
+ * Debugger PIN: 115-418-274
+ * Detected change in '/workspace/backend/test_api.py', reloading
+ * Detected change in '/workspace/backend/test_api.py', reloading
+127.0.0.1 - - [28/Jul/2025 08:46:00] "GET / HTTP/1.1" 200 -
+127.0.0.1 - - [28/Jul/2025 08:46:00] "POST /api/upload HTTP/1.1" 200 -
+127.0.0.1 - - [28/Jul/2025 08:46:00] "GET /api/data/test_data.csv_0?limit=10 HTTP/1.1" 200 -
+127.0.0.1 - - [28/Jul/2025 08:46:00] "POST /api/visualize HTTP/1.1" 200 -
+127.0.0.1 - - [28/Jul/2025 08:46:00] "POST /api/visualize HTTP/1.1" 200 -
+127.0.0.1 - - [28/Jul/2025 08:46:00] "GET /api/stats/test_data.csv_0 HTTP/1.1" 200 -
+127.0.0.1 - - [28/Jul/2025 08:46:00] "GET /api/datasets HTTP/1.1" 200 -
+ * Restarting with watchdog (inotify)
+ * Debugger is active!
+ * Debugger PIN: 115-418-274
+ * Detected change in '/workspace/backend/app.py', reloading
+ * Detected change in '/workspace/backend/config.py', reloading
+ * Detected change in '/workspace/backend/test_api.py', reloading
+ * Detected change in '/workspace/backend/app.py', reloading
+ * Detected change in '/workspace/backend/config.py', reloading
+ * Detected change in '/workspace/backend/test_api.py', reloading
+ * Restarting with watchdog (inotify)
+ * Debugger is active!
+ * Debugger PIN: 115-418-274
+ * Detected change in '/workspace/backend/app.py', reloading
+ * Detected change in '/workspace/backend/config.py', reloading
+ * Detected change in '/workspace/backend/test_api.py', reloading
+ * Detected change in '/workspace/backend/app.py', reloading
+ * Detected change in '/workspace/backend/config.py', reloading
+ * Detected change in '/workspace/backend/test_api.py', reloading
+ * Restarting with watchdog (inotify)
+ * Debugger is active!
+ * Debugger PIN: 115-418-274
+ * Detected change in '/workspace/backend/app.py', reloading
+ * Detected change in '/workspace/backend/config.py', reloading
+ * Detected change in '/workspace/backend/test_api.py', reloading
+ * Detected change in '/workspace/backend/app.py', reloading
+ * Detected change in '/workspace/backend/config.py', reloading
+ * Detected change in '/workspace/backend/test_api.py', reloading
+ * Restarting with watchdog (inotify)
+ * Debugger is active!
+ * Debugger PIN: 115-418-274
+ * Detected change in '/workspace/backend/config.py', reloading
+ * Detected change in '/workspace/backend/app.py', reloading
+ * Detected change in '/workspace/backend/test_api.py', reloading
+ * Detected change in '/workspace/backend/app.py', reloading
+ * Detected change in '/workspace/backend/config.py', reloading
+ * Detected change in '/workspace/backend/test_api.py', reloading
+ * Restarting with watchdog (inotify)
+ * Debugger is active!
+ * Debugger PIN: 115-418-274
+ * Detected change in '/workspace/backend/app.py', reloading
+ * Detected change in '/workspace/backend/config.py', reloading
+ * Detected change in '/workspace/backend/test_api.py', reloading
+ * Detected change in '/workspace/backend/config.py', reloading
+ * Detected change in '/workspace/backend/app.py', reloading
+ * Detected change in '/workspace/backend/test_api.py', reloading
+ * Restarting with watchdog (inotify)
+ * Debugger is active!
+ * Debugger PIN: 115-418-274
+127.0.0.1 - - [28/Jul/2025 08:47:43] "GET / HTTP/1.1" 200 -
+ * Detected change in '/workspace/backend/app.py', reloading
+ * Detected change in '/workspace/backend/config.py', reloading
+ * Detected change in '/workspace/backend/test_api.py', reloading
+ * Detected change in '/workspace/backend/app.py', reloading
+ * Detected change in '/workspace/backend/config.py', reloading
+ * Detected change in '/workspace/backend/test_api.py', reloading
+ * Detected change in '/workspace/backend/config.py', reloading
+ * Detected change in '/workspace/backend/app.py', reloading
+ * Detected change in '/workspace/backend/test_api.py', reloading
+ * Restarting with watchdog (inotify)
+ * Debugger is active!
+ * Debugger PIN: 115-418-274
+ * Detected change in '/workspace/backend/app.py', reloading
+ * Detected change in '/workspace/backend/config.py', reloading
+ * Detected change in '/workspace/backend/test_api.py', reloading
+ * Detected change in '/workspace/backend/app.py', reloading
+ * Detected change in '/workspace/backend/config.py', reloading
+ * Detected change in '/workspace/backend/test_api.py', reloading
+ * Restarting with watchdog (inotify)
+ * Debugger is active!
+ * Debugger PIN: 115-418-274
+ * Detected change in '/workspace/backend/app.py', reloading
+ * Detected change in '/workspace/backend/config.py', reloading
+ * Detected change in '/workspace/backend/test_api.py', reloading
+ * Detected change in '/workspace/backend/config.py', reloading
+ * Detected change in '/workspace/backend/app.py', reloading
+ * Detected change in '/workspace/backend/test_api.py', reloading
+ * Detected change in '/workspace/backend/app.py', reloading
+ * Detected change in '/workspace/backend/config.py', reloading
+ * Detected change in '/workspace/backend/test_api.py', reloading
+ * Restarting with watchdog (inotify)
+ * Debugger is active!
+ * Debugger PIN: 115-418-274
+ * Detected change in '/workspace/backend/app.py', reloading
+ * Detected change in '/workspace/backend/config.py', reloading
+ * Detected change in '/workspace/backend/test_api.py', reloading
+ * Detected change in '/workspace/backend/config.py', reloading
+ * Detected change in '/workspace/backend/app.py', reloading
+ * Detected change in '/workspace/backend/test_api.py', reloading
+ * Restarting with watchdog (inotify)
+ * Debugger is active!
+ * Debugger PIN: 115-418-274
+ * Detected change in '/workspace/backend/app.py', reloading
+ * Detected change in '/workspace/backend/config.py', reloading
+ * Detected change in '/workspace/backend/test_api.py', reloading
+ * Detected change in '/workspace/backend/config.py', reloading
+ * Detected change in '/workspace/backend/app.py', reloading
+ * Detected change in '/workspace/backend/test_api.py', reloading
+ * Restarting with watchdog (inotify)
+ * Debugger is active!
+ * Debugger PIN: 115-418-274
+ * Detected change in '/workspace/backend/app.py', reloading
+ * Detected change in '/workspace/backend/config.py', reloading
+ * Detected change in '/workspace/backend/test_api.py', reloading
+ * Detected change in '/workspace/backend/app.py', reloading
+ * Detected change in '/workspace/backend/config.py', reloading
+ * Detected change in '/workspace/backend/test_api.py', reloading
+ * Restarting with watchdog (inotify)
+ * Debugger is active!
+ * Debugger PIN: 115-418-274
+ * Detected change in '/workspace/backend/app.py', reloading
+ * Detected change in '/workspace/backend/config.py', reloading
+ * Detected change in '/workspace/backend/test_api.py', reloading
+ * Detected change in '/workspace/backend/app.py', reloading
+ * Detected change in '/workspace/backend/config.py', reloading
+ * Detected change in '/workspace/backend/test_api.py', reloading
+ * Detected change in '/workspace/backend/app.py', reloading
+ * Detected change in '/workspace/backend/config.py', reloading
+ * Detected change in '/workspace/backend/test_api.py', reloading
+ * Detected change in '/workspace/backend/config.py', reloading
+ * Detected change in '/workspace/backend/app.py', reloading
+ * Detected change in '/workspace/backend/test_api.py', reloading
+ * Detected change in '/workspace/backend/config.py', reloading
+ * Detected change in '/workspace/backend/app.py', reloading
+ * Detected change in '/workspace/backend/test_api.py', reloading
+ * Detected change in '/workspace/backend/app.py', reloading
+ * Detected change in '/workspace/backend/config.py', reloading
+ * Detected change in '/workspace/backend/test_api.py', reloading
+ * Restarting with watchdog (inotify)
+ * Debugger is active!
+ * Debugger PIN: 115-418-274
+ * Detected change in '/workspace/backend/app.py', reloading
+ * Detected change in '/workspace/backend/config.py', reloading
+ * Detected change in '/workspace/backend/test_api.py', reloading
+ * Detected change in '/workspace/backend/app.py', reloading
+ * Detected change in '/workspace/backend/config.py', reloading
+ * Detected change in '/workspace/backend/test_api.py', reloading
+ * Restarting with watchdog (inotify)
+ * Debugger is active!
+ * Debugger PIN: 115-418-274
+ * Detected change in '/workspace/backend/app.py', reloading
+ * Detected change in '/workspace/backend/config.py', reloading
+ * Detected change in '/workspace/backend/test_api.py', reloading
+ * Detected change in '/workspace/backend/app.py', reloading
+ * Detected change in '/workspace/backend/config.py', reloading
+ * Detected change in '/workspace/backend/test_api.py', reloading
+ * Restarting with watchdog (inotify)
+ * Debugger is active!
+ * Debugger PIN: 115-418-274
+ * Detected change in '/workspace/backend/app.py', reloading
+ * Detected change in '/workspace/backend/config.py', reloading
+ * Detected change in '/workspace/backend/test_api.py', reloading
+ * Restarting with watchdog (inotify)
+ * Debugger is active!
+ * Debugger PIN: 115-418-274
+ * Detected change in '/workspace/backend/app.py', reloading
+ * Detected change in '/workspace/backend/config.py', reloading
+ * Detected change in '/workspace/backend/test_api.py', reloading
+ * Detected change in '/workspace/backend/app.py', reloading
+ * Detected change in '/workspace/backend/config.py', reloading
+ * Detected change in '/workspace/backend/test_api.py', reloading
+ * Restarting with watchdog (inotify)
+ * Debugger is active!
+ * Debugger PIN: 115-418-274
+ * Detected change in '/workspace/backend/app.py', reloading
+ * Detected change in '/workspace/backend/config.py', reloading
+ * Detected change in '/workspace/backend/test_api.py', reloading
+ * Detected change in '/workspace/backend/app.py', reloading
+ * Detected change in '/workspace/backend/config.py', reloading
+ * Detected change in '/workspace/backend/test_api.py', reloading
+ * Restarting with watchdog (inotify)
+ * Debugger is active!
+ * Debugger PIN: 115-418-274
+ * Detected change in '/workspace/backend/app.py', reloading
+ * Detected change in '/workspace/backend/config.py', reloading
+ * Detected change in '/workspace/backend/test_api.py', reloading
+ * Detected change in '/workspace/backend/app.py', reloading
+ * Detected change in '/workspace/backend/config.py', reloading
+ * Detected change in '/workspace/backend/test_api.py', reloading
+ * Restarting with watchdog (inotify)
+ * Debugger is active!
+ * Debugger PIN: 115-418-274
+ * Detected change in '/workspace/backend/app.py', reloading
+ * Detected change in '/workspace/backend/config.py', reloading
+ * Detected change in '/workspace/backend/test_api.py', reloading
+ * Detected change in '/workspace/backend/app.py', reloading
+ * Detected change in '/workspace/backend/config.py', reloading
+ * Detected change in '/workspace/backend/test_api.py', reloading
+ * Restarting with watchdog (inotify)
+ * Debugger is active!
+ * Debugger PIN: 115-418-274
+ * Detected change in '/workspace/backend/app.py', reloading
+ * Detected change in '/workspace/backend/config.py', reloading
+ * Detected change in '/workspace/backend/test_api.py', reloading
+ * Detected change in '/workspace/backend/config.py', reloading
+ * Detected change in '/workspace/backend/app.py', reloading
+ * Detected change in '/workspace/backend/test_api.py', reloading
+ * Restarting with watchdog (inotify)
+ * Debugger is active!
+ * Debugger PIN: 115-418-274
+ * Detected change in '/workspace/backend/app.py', reloading
+ * Detected change in '/workspace/backend/config.py', reloading
+ * Detected change in '/workspace/backend/test_api.py', reloading
+ * Detected change in '/workspace/backend/app.py', reloading
+ * Detected change in '/workspace/backend/config.py', reloading
+ * Detected change in '/workspace/backend/test_api.py', reloading
+ * Restarting with watchdog (inotify)
+ * Debugger is active!
+ * Debugger PIN: 115-418-274
+ * Detected change in '/workspace/backend/app.py', reloading
+ * Detected change in '/workspace/backend/config.py', reloading
+ * Detected change in '/workspace/backend/test_api.py', reloading
+ * Detected change in '/workspace/backend/app.py', reloading
+ * Detected change in '/workspace/backend/test_api.py', reloading
+ * Detected change in '/workspace/backend/config.py', reloading
+ * Restarting with watchdog (inotify)
+ * Debugger is active!
+ * Debugger PIN: 115-418-274
+ * Detected change in '/workspace/backend/app.py', reloading
+ * Detected change in '/workspace/backend/config.py', reloading
+ * Detected change in '/workspace/backend/test_api.py', reloading
+ * Detected change in '/workspace/backend/app.py', reloading
+ * Detected change in '/workspace/backend/config.py', reloading
+ * Detected change in '/workspace/backend/test_api.py', reloading
+ * Restarting with watchdog (inotify)
+ * Debugger is active!
+ * Debugger PIN: 115-418-274
+ * Detected change in '/workspace/backend/app.py', reloading
+ * Detected change in '/workspace/backend/config.py', reloading
+ * Detected change in '/workspace/backend/test_api.py', reloading
+ * Detected change in '/workspace/backend/config.py', reloading
+ * Detected change in '/workspace/backend/app.py', reloading
+ * Detected change in '/workspace/backend/test_api.py', reloading
+ * Restarting with watchdog (inotify)
+ * Debugger is active!
+ * Debugger PIN: 115-418-274
+ * Detected change in '/workspace/backend/app.py', reloading
+ * Detected change in '/workspace/backend/config.py', reloading
+ * Detected change in '/workspace/backend/test_api.py', reloading
+ * Detected change in '/workspace/backend/app.py', reloading
+ * Detected change in '/workspace/backend/config.py', reloading
+ * Detected change in '/workspace/backend/test_api.py', reloading
+ * Restarting with watchdog (inotify)
+ * Debugger is active!
+ * Debugger PIN: 115-418-274
+ * Detected change in '/workspace/backend/app.py', reloading
+ * Detected change in '/workspace/backend/config.py', reloading
+ * Detected change in '/workspace/backend/test_api.py', reloading
+ * Detected change in '/workspace/backend/config.py', reloading
+ * Detected change in '/workspace/backend/app.py', reloading
+ * Detected change in '/workspace/backend/test_api.py', reloading
+ * Restarting with watchdog (inotify)
+ * Debugger is active!
+ * Debugger PIN: 115-418-274
+ * Detected change in '/workspace/backend/app.py', reloading
+ * Detected change in '/workspace/backend/config.py', reloading
+ * Detected change in '/workspace/backend/test_api.py', reloading
+ * Detected change in '/workspace/backend/config.py', reloading
+ * Detected change in '/workspace/backend/app.py', reloading
+ * Detected change in '/workspace/backend/test_api.py', reloading
+ * Restarting with watchdog (inotify)
+ * Debugger is active!
+ * Debugger PIN: 115-418-274
+ * Detected change in '/workspace/backend/app.py', reloading
+ * Detected change in '/workspace/backend/config.py', reloading
+ * Detected change in '/workspace/backend/test_api.py', reloading
+ * Detected change in '/workspace/backend/app.py', reloading
+ * Detected change in '/workspace/backend/config.py', reloading
+ * Detected change in '/workspace/backend/test_api.py', reloading
+ * Restarting with watchdog (inotify)
+ * Debugger is active!
+ * Debugger PIN: 115-418-274
+ * Detected change in '/workspace/backend/app.py', reloading
+ * Detected change in '/workspace/backend/config.py', reloading
+ * Detected change in '/workspace/backend/test_api.py', reloading
+ * Detected change in '/workspace/backend/app.py', reloading
+ * Detected change in '/workspace/backend/config.py', reloading
+ * Detected change in '/workspace/backend/test_api.py', reloading
+ * Restarting with watchdog (inotify)
+ * Debugger is active!
+ * Debugger PIN: 115-418-274
+ * Detected change in '/workspace/backend/app.py', reloading
+ * Detected change in '/workspace/backend/config.py', reloading
+ * Detected change in '/workspace/backend/test_api.py', reloading
+ * Detected change in '/workspace/backend/app.py', reloading
+ * Detected change in '/workspace/backend/config.py', reloading
+ * Detected change in '/workspace/backend/test_api.py', reloading
+ * Restarting with watchdog (inotify)
+ * Debugger is active!
+ * Debugger PIN: 115-418-274
+ * Detected change in '/workspace/backend/app.py', reloading
+ * Detected change in '/workspace/backend/config.py', reloading
+ * Detected change in '/workspace/backend/test_api.py', reloading
+ * Detected change in '/workspace/backend/app.py', reloading
+ * Detected change in '/workspace/backend/config.py', reloading
+ * Detected change in '/workspace/backend/test_api.py', reloading
+ * Restarting with watchdog (inotify)
+ * Debugger is active!
+ * Debugger PIN: 115-418-274
+ * Detected change in '/workspace/backend/app.py', reloading
+ * Restarting with watchdog (inotify)
+ * Debugger is active!
+ * Debugger PIN: 115-418-274
+ * Detected change in '/workspace/backend/app.py', reloading
+ * Detected change in '/workspace/backend/app.py', reloading
+ * Detected change in '/workspace/backend/config.py', reloading
+ * Detected change in '/workspace/backend/test_api.py', reloading
+ * Detected change in '/workspace/backend/app.py', reloading
+ * Detected change in '/workspace/backend/config.py', reloading
+ * Detected change in '/workspace/backend/test_api.py', reloading
+🔍 Checking environment setup...
+📦 Checking dependencies...
+✅ All dependencies are installed
+📁 Uploads directory: /workspace/backend/uploads
+🚀 Starting Data Visualization Backend API...
+==================================================
+🌐 Server will run on: http://localhost:5001
+📚 API Documentation: backend/api_docs.md
+🧪 Test API: python test_api.py
+🎨 Frontend: Open frontend.html in browser
+==================================================
+ * Restarting with watchdog (inotify)
+ * Debugger is active!
+ * Debugger PIN: 115-418-274
+ * Detected change in '/workspace/backend/app.py', reloading
+ * Detected change in '/workspace/backend/app.py', reloading
+🔍 Checking environment setup...
+📦 Checking dependencies...
+✅ All dependencies are installed
+📁 Uploads directory: /workspace/backend/uploads
+🚀 Starting Data Visualization Backend API...
+==================================================
+🌐 Server will run on: http://localhost:5001
+📚 API Documentation: backend/api_docs.md
+🧪 Test API: python test_api.py
+🎨 Frontend: Open frontend.html in browser
+==================================================
+ * Restarting with watchdog (inotify)
+ * Debugger is active!
+ * Debugger PIN: 115-418-274

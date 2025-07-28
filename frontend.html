@@ -1,0 +1,449 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Data Visualization Dashboard - Frontend</title>
+    <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        h1 {
+            color: #333;
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        .section {
+            margin-bottom: 30px;
+            padding: 20px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            background-color: #fafafa;
+        }
+        .section h2 {
+            color: #555;
+            margin-top: 0;
+        }
+        .form-group {
+            margin-bottom: 15px;
+        }
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+            color: #555;
+        }
+        input, select, button {
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 14px;
+        }
+        input[type="file"] {
+            width: 100%;
+        }
+        select {
+            width: 200px;
+        }
+        button {
+            background-color: #007bff;
+            color: white;
+            cursor: pointer;
+            border: none;
+            padding: 12px 24px;
+            font-size: 16px;
+            border-radius: 6px;
+            transition: background-color 0.3s;
+        }
+        button:hover {
+            background-color: #0056b3;
+        }
+        button:disabled {
+            background-color: #6c757d;
+            cursor: not-allowed;
+        }
+        .status {
+            padding: 10px;
+            margin: 10px 0;
+            border-radius: 4px;
+            display: none;
+        }
+        .status.success {
+            background-color: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+        .status.error {
+            background-color: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+        .data-preview {
+            max-height: 300px;
+            overflow-y: auto;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            margin-top: 10px;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        th, td {
+            padding: 8px 12px;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+        }
+        th {
+            background-color: #f8f9fa;
+            font-weight: bold;
+        }
+        #chart {
+            width: 100%;
+            height: 500px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            margin-top: 15px;
+        }
+        .controls {
+            display: flex;
+            gap: 15px;
+            flex-wrap: wrap;
+            align-items: end;
+        }
+        .api-info {
+            background-color: #e7f3ff;
+            border: 1px solid #b8daff;
+            padding: 15px;
+            border-radius: 6px;
+            margin-bottom: 20px;
+        }
+        .api-info h3 {
+            margin-top: 0;
+            color: #004085;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🚀 Data Visualization Dashboard</h1>
+        
+        <div class="api-info">
+            <h3>Flask Backend API</h3>
+            <p><strong>API URL:</strong> <code>http://localhost:5001</code></p>
+            <p><strong>Status:</strong> <span id="api-status">Checking...</span></p>
+        </div>
+
+        <!-- File Upload Section -->
+        <div class="section">
+            <h2>📤 Upload CSV File</h2>
+            <div class="form-group">
+                <label for="csvFile">Select CSV File:</label>
+                <input type="file" id="csvFile" accept=".csv" />
+            </div>
+            <button onclick="uploadFile()">Upload File</button>
+            <div id="upload-status" class="status"></div>
+            
+            <div id="data-info" style="display: none;">
+                <h3>Dataset Information</h3>
+                <p><strong>Dataset ID:</strong> <span id="dataset-id"></span></p>
+                <p><strong>Shape:</strong> <span id="dataset-shape"></span></p>
+                <p><strong>Columns:</strong> <span id="dataset-columns"></span></p>
+                
+                <div class="data-preview" id="data-preview"></div>
+            </div>
+        </div>
+
+        <!-- Visualization Section -->
+        <div class="section">
+            <h2>📊 Create Visualization</h2>
+            <div class="controls">
+                <div class="form-group">
+                    <label for="chart-type">Chart Type:</label>
+                    <select id="chart-type">
+                        <option value="scatter">Scatter Plot</option>
+                        <option value="line">Line Chart</option>
+                        <option value="bar">Bar Chart</option>
+                        <option value="histogram">Histogram</option>
+                        <option value="box">Box Plot</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="x-axis">X-Axis:</label>
+                    <select id="x-axis"></select>
+                </div>
+                <div class="form-group">
+                    <label for="y-axis">Y-Axis:</label>
+                    <select id="y-axis"></select>
+                </div>
+                <div class="form-group">
+                    <label for="color-column">Color:</label>
+                    <select id="color-column">
+                        <option value="">None</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <button onclick="createVisualization()" id="viz-button" disabled>Create Chart</button>
+                </div>
+            </div>
+            <div id="viz-status" class="status"></div>
+            <div id="chart"></div>
+        </div>
+
+        <!-- Statistics Section -->
+        <div class="section">
+            <h2>📈 Dataset Statistics</h2>
+            <button onclick="getStatistics()" id="stats-button" disabled>Get Statistics</button>
+            <div id="stats-status" class="status"></div>
+            <div id="statistics-content"></div>
+        </div>
+    </div>
+
+    <script>
+        const API_BASE_URL = 'http://localhost:5001';
+        let currentDatasetId = null;
+        let currentColumns = [];
+
+        // Check API status on page load
+        window.onload = function() {
+            checkApiStatus();
+        };
+
+        async function checkApiStatus() {
+            try {
+                const response = await fetch(`${API_BASE_URL}/`);
+                const data = await response.json();
+                document.getElementById('api-status').innerHTML = '✅ Connected';
+                document.getElementById('api-status').style.color = 'green';
+            } catch (error) {
+                document.getElementById('api-status').innerHTML = '❌ Disconnected';
+                document.getElementById('api-status').style.color = 'red';
+            }
+        }
+
+        async function uploadFile() {
+            const fileInput = document.getElementById('csvFile');
+            const file = fileInput.files[0];
+            
+            if (!file) {
+                showStatus('upload-status', 'Please select a file', 'error');
+                return;
+            }
+
+            const formData = new FormData();
+            formData.append('file', file);
+
+            try {
+                const response = await fetch(`${API_BASE_URL}/api/upload`, {
+                    method: 'POST',
+                    body: formData
+                });
+
+                const data = await response.json();
+
+                if (response.ok) {
+                    currentDatasetId = data.dataset_id;
+                    currentColumns = data.columns;
+                    
+                    showStatus('upload-status', data.message, 'success');
+                    displayDataInfo(data);
+                    populateColumnSelectors(data.columns);
+                    enableButtons();
+                } else {
+                    showStatus('upload-status', data.error, 'error');
+                }
+            } catch (error) {
+                showStatus('upload-status', 'Upload failed: ' + error.message, 'error');
+            }
+        }
+
+        function displayDataInfo(data) {
+            document.getElementById('dataset-id').textContent = data.dataset_id;
+            document.getElementById('dataset-shape').textContent = `${data.shape[0]} rows × ${data.shape[1]} columns`;
+            document.getElementById('dataset-columns').textContent = data.columns.join(', ');
+            
+            // Display data preview
+            const preview = document.getElementById('data-preview');
+            if (data.preview && data.preview.length > 0) {
+                const table = createTable(data.preview);
+                preview.innerHTML = table;
+            }
+            
+            document.getElementById('data-info').style.display = 'block';
+        }
+
+        function createTable(data) {
+            if (!data || data.length === 0) return '<p>No data to display</p>';
+            
+            const columns = Object.keys(data[0]);
+            let html = '<table><thead><tr>';
+            
+            columns.forEach(col => {
+                html += `<th>${col}</th>`;
+            });
+            html += '</tr></thead><tbody>';
+            
+            data.forEach(row => {
+                html += '<tr>';
+                columns.forEach(col => {
+                    html += `<td>${row[col] !== null ? row[col] : 'N/A'}</td>`;
+                });
+                html += '</tr>';
+            });
+            
+            html += '</tbody></table>';
+            return html;
+        }
+
+        function populateColumnSelectors(columns) {
+            const xAxis = document.getElementById('x-axis');
+            const yAxis = document.getElementById('y-axis');
+            const colorColumn = document.getElementById('color-column');
+            
+            // Clear existing options
+            xAxis.innerHTML = '';
+            yAxis.innerHTML = '<option value="">Select column</option>';
+            colorColumn.innerHTML = '<option value="">None</option>';
+            
+            columns.forEach(col => {
+                xAxis.innerHTML += `<option value="${col}">${col}</option>`;
+                yAxis.innerHTML += `<option value="${col}">${col}</option>`;
+                colorColumn.innerHTML += `<option value="${col}">${col}</option>`;
+            });
+        }
+
+        async function createVisualization() {
+            const chartType = document.getElementById('chart-type').value;
+            const xAxis = document.getElementById('x-axis').value;
+            const yAxis = document.getElementById('y-axis').value;
+            const colorColumn = document.getElementById('color-column').value;
+            
+            if (!xAxis) {
+                showStatus('viz-status', 'Please select X-axis column', 'error');
+                return;
+            }
+            
+            if (['scatter', 'line', 'bar'].includes(chartType) && !yAxis) {
+                showStatus('viz-status', 'Please select Y-axis column for this chart type', 'error');
+                return;
+            }
+
+            const requestData = {
+                dataset_id: currentDatasetId,
+                chart_type: chartType,
+                x_axis: xAxis,
+                y_axis: yAxis || null,
+                color: colorColumn || null,
+                title: `${chartType.charAt(0).toUpperCase() + chartType.slice(1)} Chart`
+            };
+
+            try {
+                const response = await fetch(`${API_BASE_URL}/api/visualize`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(requestData)
+                });
+
+                const data = await response.json();
+
+                if (response.ok) {
+                    showStatus('viz-status', 'Chart created successfully!', 'success');
+                    Plotly.newPlot('chart', data.chart_data.data, data.chart_data.layout);
+                } else {
+                    showStatus('viz-status', data.error, 'error');
+                }
+            } catch (error) {
+                showStatus('viz-status', 'Visualization failed: ' + error.message, 'error');
+            }
+        }
+
+        async function getStatistics() {
+            try {
+                const response = await fetch(`${API_BASE_URL}/api/stats/${currentDatasetId}`);
+                const data = await response.json();
+
+                if (response.ok) {
+                    showStatus('stats-status', 'Statistics generated successfully!', 'success');
+                    displayStatistics(data);
+                } else {
+                    showStatus('stats-status', data.error, 'error');
+                }
+            } catch (error) {
+                showStatus('stats-status', 'Statistics failed: ' + error.message, 'error');
+            }
+        }
+
+        function displayStatistics(data) {
+            const content = document.getElementById('statistics-content');
+            let html = '<h3>Dataset Overview</h3>';
+            html += `<p><strong>Shape:</strong> ${data.info.shape[0]} rows × ${data.info.shape[1]} columns</p>`;
+            html += `<p><strong>Missing Values:</strong> ${Object.values(data.info.missing_values).reduce((a, b) => a + b, 0)} total</p>`;
+            
+            if (data.statistics.numeric) {
+                html += '<h4>Numeric Columns Statistics</h4>';
+                html += createStatsTable(data.statistics.numeric);
+            }
+            
+            if (data.statistics.categorical) {
+                html += '<h4>Categorical Columns</h4>';
+                for (const [col, stats] of Object.entries(data.statistics.categorical)) {
+                    html += `<p><strong>${col}:</strong> ${stats.unique_count} unique values</p>`;
+                }
+            }
+            
+            content.innerHTML = html;
+        }
+
+        function createStatsTable(numericStats) {
+            let html = '<table><thead><tr><th>Column</th><th>Count</th><th>Mean</th><th>Std</th><th>Min</th><th>Max</th></tr></thead><tbody>';
+            
+            for (const [col, stats] of Object.entries(numericStats)) {
+                html += `<tr>
+                    <td>${col}</td>
+                    <td>${stats.count}</td>
+                    <td>${stats.mean.toFixed(2)}</td>
+                    <td>${stats.std.toFixed(2)}</td>
+                    <td>${stats.min}</td>
+                    <td>${stats.max}</td>
+                </tr>`;
+            }
+            
+            html += '</tbody></table>';
+            return html;
+        }
+
+        function enableButtons() {
+            document.getElementById('viz-button').disabled = false;
+            document.getElementById('stats-button').disabled = false;
+        }
+
+        function showStatus(elementId, message, type) {
+            const statusEl = document.getElementById(elementId);
+            statusEl.textContent = message;
+            statusEl.className = `status ${type}`;
+            statusEl.style.display = 'block';
+            
+            // Hide after 5 seconds for success messages
+            if (type === 'success') {
+                setTimeout(() => {
+                    statusEl.style.display = 'none';
+                }, 5000);
+            }
+        }
+    </script>
+</body>
+</html>

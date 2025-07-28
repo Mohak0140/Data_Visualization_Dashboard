@@ -96,33 +96,78 @@ def main():
             # Chart type selection
             chart_type = st.sidebar.selectbox(
                 "Select chart type", 
-                ["Scatter", "Line", "Bar", "Histogram", "Box"],
+                [
+                    "Scatter", "Line", "Bar", "Histogram", "Box", 
+                    "Pie", "Donut", "Time-Series", "Pair Plot", "Aggregation", "Correlation Heatmap"
+                ],
                 help="Choose the type of visualization to create"
             )
             
             # Column selection
             numeric_columns = df.select_dtypes(include=['number']).columns.tolist()
             all_columns = df.columns.tolist()
-            
+            categorical_columns = df.select_dtypes(include=['object', 'category']).columns.tolist()
+            datetime_columns = df.select_dtypes(include=['datetime', 'datetimetz']).columns.tolist()
+            # Try to parse datetime columns if not already detected
+            if not datetime_columns:
+                for col in df.columns:
+                    try:
+                        if pd.api.types.is_datetime64_any_dtype(df[col]):
+                            datetime_columns.append(col)
+                        elif pd.to_datetime(df[col], errors='raise', infer_datetime_format=True).notnull().all():
+                            df[col] = pd.to_datetime(df[col], errors='coerce', infer_datetime_format=True)
+                            datetime_columns.append(col)
+                    except Exception:
+                        continue
+
+            # Visualization controls
             x_axis = st.sidebar.selectbox("X-axis", all_columns)
-            
-            if chart_type in ["Scatter", "Line", "Bar", "Box"]:
+            y_axis = None
+            if chart_type in ["Scatter", "Line", "Bar", "Box", "Time-Series"]:
                 y_axis = st.sidebar.selectbox("Y-axis", all_columns)
-            else:
-                y_axis = None
-            
             color = st.sidebar.selectbox(
                 "Color (optional)", 
                 [None] + all_columns,
                 help="Select a column to color-code the visualization"
             )
-            
-            # Chart title
             chart_title = st.sidebar.text_input(
                 "Chart Title", 
                 value=f"{chart_type} Chart",
                 help="Enter a custom title for your chart"
             )
+
+            # Pie/Donut chart controls
+            pie_col = None
+            pie_val = None
+            if chart_type in ["Pie", "Donut"]:
+                pie_col = st.sidebar.selectbox("Category column", categorical_columns or all_columns)
+                pie_val = st.sidebar.selectbox("Value column (optional)", [None] + numeric_columns)
+
+            # Time-Series controls
+            ts_col = None
+            ts_resample = None
+            if chart_type == "Time-Series" and datetime_columns:
+                ts_col = st.sidebar.selectbox("Datetime column", datetime_columns)
+                ts_resample = st.sidebar.selectbox("Resample frequency", ["None", "D", "W", "M", "Q", "Y"], help="Resample: D=Day, W=Week, M=Month, Q=Quarter, Y=Year")
+
+            # Aggregation controls
+            group_col = None
+            agg_func = None
+            agg_val = None
+            if chart_type == "Aggregation":
+                group_col = st.sidebar.selectbox("Group by column", categorical_columns or all_columns)
+                agg_val = st.sidebar.multiselect("Aggregate columns", numeric_columns)
+                agg_func = st.sidebar.selectbox("Aggregation function", ["mean", "sum", "count", "min", "max"])
+
+            # Pair Plot controls
+            pair_cols = None
+            if chart_type == "Pair Plot":
+                pair_cols = st.sidebar.multiselect("Columns for Pair Plot", numeric_columns, default=numeric_columns[:3])
+
+            # Correlation Heatmap controls
+            corr_cols = None
+            if chart_type == "Correlation Heatmap":
+                corr_cols = st.sidebar.multiselect("Columns for Correlation", numeric_columns, default=numeric_columns)
 
             # Create visualization
             fig = None
@@ -143,6 +188,38 @@ def main():
                         fig = px.box(df, x=x_axis, y=y_axis, color=color, title=chart_title)
                     else:
                         fig = px.box(df, y=x_axis, color=color, title=chart_title)
+                elif chart_type == "Pie":
+                    if pie_col:
+                        fig = px.pie(df, names=pie_col, values=pie_val, title=chart_title, hole=0)
+                elif chart_type == "Donut":
+                    if pie_col:
+                        fig = px.pie(df, names=pie_col, values=pie_val, title=chart_title, hole=0.5)
+                elif chart_type == "Time-Series" and ts_col:
+                    ts_df = df.copy()
+                    ts_df = ts_df.dropna(subset=[ts_col])
+                    if ts_resample and ts_resample != "None":
+                        ts_df = ts_df.set_index(ts_col)
+                        if y_axis in ts_df.columns:
+                            ts_df = ts_df[[y_axis]].resample(ts_resample).mean().reset_index()
+                        else:
+                            st.warning("Selected Y-axis not found after resampling.")
+                    fig = px.line(ts_df, x=ts_col, y=y_axis, color=color, title=chart_title)
+                elif chart_type == "Pair Plot" and pair_cols:
+                    fig = px.scatter_matrix(df, dimensions=pair_cols, color=color, title=chart_title)
+                elif chart_type == "Aggregation" and group_col and agg_val:
+                    grouped = df.groupby(group_col)[agg_val].agg(agg_func)
+                    fig = px.bar(grouped.reset_index(), x=group_col, y=agg_val[0] if len(agg_val)==1 else agg_val, title=f"{agg_func.title()} by {group_col}")
+                elif chart_type == "Correlation Heatmap" and corr_cols:
+                    import plotly.graph_objects as go
+                    corr = df[corr_cols].corr()
+                    fig = go.Figure(data=go.Heatmap(
+                        z=corr.values,
+                        x=corr.columns,
+                        y=corr.columns,
+                        colorscale='Viridis',
+                        colorbar=dict(title="Correlation")
+                    ))
+                    fig.update_layout(title=chart_title)
 
                 if fig:
                     st.subheader("📈 Visualization")

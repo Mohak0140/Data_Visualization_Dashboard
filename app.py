@@ -108,17 +108,22 @@ def main():
             all_columns = df.columns.tolist()
             categorical_columns = df.select_dtypes(include=['object', 'category']).columns.tolist()
             datetime_columns = df.select_dtypes(include=['datetime', 'datetimetz']).columns.tolist()
-            # Try to parse datetime columns if not already detected
+            # Improved: Only try to parse as datetime if column is object/string and not numeric
             if not datetime_columns:
                 for col in df.columns:
-                    try:
-                        if pd.api.types.is_datetime64_any_dtype(df[col]):
-                            datetime_columns.append(col)
-                        elif pd.to_datetime(df[col], errors='raise', infer_datetime_format=True).notnull().all():
-                            df[col] = pd.to_datetime(df[col], errors='coerce', infer_datetime_format=True)
-                            datetime_columns.append(col)
-                    except Exception:
-                        continue
+                    if col in numeric_columns:
+                        continue  # skip numeric columns
+                    if pd.api.types.is_datetime64_any_dtype(df[col]):
+                        datetime_columns.append(col)
+                    elif df[col].dtype == object or pd.api.types.is_string_dtype(df[col]):
+                        try:
+                            parsed = pd.to_datetime(df[col], errors='raise', infer_datetime_format=True)
+                            # Only treat as datetime if at least 80% of values are valid dates
+                            if parsed.notnull().mean() > 0.8:
+                                df[col] = pd.to_datetime(df[col], errors='coerce', infer_datetime_format=True)
+                                datetime_columns.append(col)
+                        except Exception:
+                            continue
 
             # Visualization controls
             x_axis = st.sidebar.selectbox("X-axis", all_columns)

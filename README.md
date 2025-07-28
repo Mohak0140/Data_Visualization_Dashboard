@@ -20,19 +20,28 @@ This project provides **two different approaches** for building data visualizati
 
 ## 🚀 Quick Start
 
-### Option 1: Run Streamlit Application
+### Using Python Launcher (Recommended)
 ```bash
-# Start the integrated Streamlit app
-./run.sh
-# Access at: http://localhost:8501
+# Check project status
+python launcher.py status
+
+# Start Streamlit application
+python launcher.py streamlit
+
+# Start Flask backend
+python launcher.py flask
+
+# Start both applications
+python launcher.py both
 ```
 
-### Option 2: Run Flask Backend + HTML Frontend
+### Direct Python Execution
 ```bash
-# Start Flask API server
-cd backend && ./run_backend.sh
-# Access API at: http://localhost:5001
-# Open frontend.html in your browser
+# Streamlit app (includes environment setup)
+python app.py
+
+# Flask backend (includes environment setup)
+cd backend && python app.py
 ```
 
 ## 📁 Project Structure
@@ -40,17 +49,15 @@ cd backend && ./run_backend.sh
 ```
 Data_Visualization_Dashboard/
 ├── 📱 STREAMLIT APPLICATION
-│   ├── app.py                 # Main Streamlit app
-│   ├── requirements.txt       # Streamlit dependencies
-│   └── run.sh                # Streamlit startup script
+│   ├── app.py                 # Main Streamlit app (includes setup)
+│   └── requirements.txt       # Streamlit dependencies
 │
 ├── 🔧 FLASK BACKEND
 │   ├── backend/
-│   │   ├── app.py            # Flask REST API
+│   │   ├── app.py            # Flask REST API (includes setup)
 │   │   ├── config.py         # Configuration management
 │   │   ├── .env              # Environment variables
 │   │   ├── requirements.txt  # Flask dependencies
-│   │   ├── run_backend.sh    # Backend startup script
 │   │   ├── test_api.py       # API test suite
 │   │   └── api_docs.md       # API documentation
 │   │
@@ -58,6 +65,7 @@ Data_Visualization_Dashboard/
 │   └── frontend.html         # HTML/JS frontend
 │
 ├── 🔧 SHARED
+│   ├── launcher.py           # Python-based application launcher
 │   ├── venv/                 # Python virtual environment
 │   └── README.md            # This file
 ```
@@ -150,7 +158,7 @@ python test_api.py
 ### Test Streamlit App
 ```bash
 # Start the app and test via web interface
-./run.sh
+python launcher.py streamlit
 ```
 
 ## 🔧 Development Setup
@@ -178,14 +186,14 @@ pip install -r backend/requirements.txt
 ## 🌐 Usage Examples
 
 ### Using Streamlit Interface
-1. Run `./run.sh`
+1. Run `python launcher.py streamlit` or `python app.py`
 2. Open http://localhost:8501
 3. Upload CSV file using the file uploader
 4. Configure chart parameters in sidebar
 5. View interactive visualizations
 
 ### Using Flask API + HTML Frontend
-1. Start backend: `cd backend && ./run_backend.sh`
+1. Start backend: `python launcher.py flask` or `cd backend && python app.py`
 2. Open `frontend.html` in your browser
 3. Upload CSV file via the web interface
 4. Create visualizations using the controls

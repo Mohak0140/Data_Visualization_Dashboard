@@ -7,19 +7,77 @@ import plotly.utils
 import json
 import io
 import os
+import sys
+import subprocess
+from pathlib import Path
 from werkzeug.utils import secure_filename
 import numpy as np
 
-app = Flask(__name__)
-CORS(app)  # Enable CORS for all routes
+def setup_environment():
+    """Setup environment and install dependencies if needed"""
+    print("🔍 Checking environment setup...")
+    
+    # Check if virtual environment exists
+    venv_path = Path("../venv")
+    if not venv_path.exists():
+        print("❌ Virtual environment not found. Creating it...")
+        try:
+            subprocess.run([sys.executable, "-m", "venv", "../venv"], check=True)
+            print("✅ Virtual environment created successfully")
+        except subprocess.CalledProcessError as e:
+            print(f"❌ Failed to create virtual environment: {e}")
+            sys.exit(1)
+    
+    # Check if we're in the virtual environment
+    in_venv = (hasattr(sys, 'real_prefix') or 
+               (hasattr(sys, 'base_prefix') and sys.base_prefix != sys.prefix))
+    
+    if not in_venv:
+        print("⚠️  Not running in virtual environment")
+        print("💡 Tip: Activate with 'source ../venv/bin/activate'")
+    
+    # Check and install dependencies
+    requirements_file = Path("requirements.txt")
+    if requirements_file.exists():
+        print("📦 Checking dependencies...")
+        try:
+            # Try importing required packages
+            import flask
+            import flask_cors
+            import pandas
+            import plotly
+            import numpy
+            print("✅ All dependencies are installed")
+        except ImportError as e:
+            print(f"📦 Installing missing dependency: {e}")
+            try:
+                subprocess.run([
+                    sys.executable, "-m", "pip", "install", "-r", str(requirements_file)
+                ], check=True)
+                print("✅ Dependencies installed successfully")
+            except subprocess.CalledProcessError as e:
+                print(f"❌ Failed to install dependencies: {e}")
+                print("💡 Try: pip install -r requirements.txt")
+    
+    # Create uploads directory
+    uploads_dir = Path("uploads")
+    uploads_dir.mkdir(exist_ok=True)
+    print(f"📁 Uploads directory: {uploads_dir.absolute()}")
 
-# Configuration
-app.config['MAX_CONTENT_LENGTH'] = 16 * 1024 * 1024  # 16MB max file size
-app.config['UPLOAD_FOLDER'] = 'uploads'
+def create_app():
+    """Create and configure Flask application"""
+    app = Flask(__name__)
+    CORS(app)  # Enable CORS for all routes
+
+    # Configuration
+    app.config['MAX_CONTENT_LENGTH'] = 16 * 1024 * 1024  # 16MB max file size
+    app.config['UPLOAD_FOLDER'] = 'uploads'
+    
+    return app
+
+# Initialize Flask app
+app = create_app()
 ALLOWED_EXTENSIONS = {'csv'}
-
-# Create uploads directory if it doesn't exist
-os.makedirs(app.config['UPLOAD_FOLDER'], exist_ok=True)
 
 def allowed_file(filename):
     return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
@@ -29,15 +87,24 @@ uploaded_data = {}
 
 @app.route('/', methods=['GET'])
 def home():
-    """Health check endpoint"""
+    """Health check endpoint with system information"""
     return jsonify({
         'message': 'Data Visualization API is running',
         'version': '1.0.0',
+        'python_version': sys.version.split()[0],
+        'working_directory': os.getcwd(),
+        'uploaded_datasets': len(uploaded_data),
         'endpoints': {
             'upload': '/api/upload',
             'data': '/api/data',
             'visualize': '/api/visualize',
-            'stats': '/api/stats'
+            'stats': '/api/stats',
+            'datasets': '/api/datasets'
+        },
+        'status': {
+            'flask': '✅ Running',
+            'cors': '✅ Enabled',
+            'uploads': '✅ Ready'
         }
     })
 
@@ -65,6 +132,8 @@ def upload_file():
         # Store the dataframe
         uploaded_data[dataset_id] = df
         
+        print(f"📤 File uploaded: {file.filename} -> {dataset_id} (Shape: {df.shape})")
+        
         # Return dataset info
         return jsonify({
             'dataset_id': dataset_id,
@@ -73,10 +142,13 @@ def upload_file():
             'columns': df.columns.tolist(),
             'dtypes': df.dtypes.astype(str).to_dict(),
             'preview': df.head().to_dict('records'),
+            'memory_usage': f"{df.memory_usage(deep=True).sum() / 1024:.1f} KB",
+            'missing_values': df.isnull().sum().sum(),
             'message': 'File uploaded successfully'
         })
     
     except Exception as e:
+        print(f"❌ Upload error: {e}")
         return jsonify({'error': f'Error processing file: {str(e)}'}), 500
 
 @app.route('/api/data/<dataset_id>', methods=['GET'])
@@ -105,10 +177,17 @@ def get_data(dataset_id):
                 'offset': offset,
                 'limit': limit,
                 'has_more': offset + limit < len(df)
+            },
+            'summary': {
+                'memory_usage': f"{df.memory_usage(deep=True).sum() / 1024:.1f} KB",
+                'missing_values': df.isnull().sum().sum(),
+                'numeric_columns': len(df.select_dtypes(include=['number']).columns),
+                'categorical_columns': len(df.select_dtypes(include=['object']).columns)
             }
         })
     
     except Exception as e:
+        print(f"❌ Data retrieval error: {e}")
         return jsonify({'error': f'Error retrieving data: {str(e)}'}), 500
 
 @app.route('/api/visualize', methods=['POST'])
@@ -181,6 +260,8 @@ def create_visualization():
         # Convert to JSON
         graph_json = json.dumps(fig, cls=plotly.utils.PlotlyJSONEncoder)
         
+        print(f"📊 Visualization created: {chart_type} chart for {dataset_id}")
+        
         return jsonify({
             'chart_data': json.loads(graph_json),
             'chart_type': chart_type,
@@ -189,10 +270,15 @@ def create_visualization():
                 'y_axis': y_axis,
                 'color': color,
                 'title': title
+            },
+            'dataset_info': {
+                'rows_used': len(df),
+                'columns_used': [col for col in [x_axis, y_axis, color] if col]
             }
         })
     
     except Exception as e:
+        print(f"❌ Visualization error: {e}")
         return jsonify({'error': f'Error creating visualization: {str(e)}'}), 500
 
 @app.route('/api/stats/<dataset_id>', methods=['GET'])
@@ -227,17 +313,27 @@ def get_statistics(dataset_id):
             for col in categorical_columns:
                 categorical_stats[col] = {
                     'unique_count': df[col].nunique(),
-                    'top_values': df[col].value_counts().head(10).to_dict()
+                    'top_values': df[col].value_counts().head(10).to_dict(),
+                    'missing_count': df[col].isnull().sum()
                 }
             stats['categorical'] = categorical_stats
+        
+        print(f"📈 Statistics generated for {dataset_id}")
         
         return jsonify({
             'dataset_id': dataset_id,
             'info': info,
-            'statistics': stats
+            'statistics': stats,
+            'summary': {
+                'total_missing': df.isnull().sum().sum(),
+                'numeric_columns': len(numeric_columns),
+                'categorical_columns': len(categorical_columns),
+                'memory_usage_mb': df.memory_usage(deep=True).sum() / (1024 * 1024)
+            }
         })
     
     except Exception as e:
+        print(f"❌ Statistics error: {e}")
         return jsonify({'error': f'Error generating statistics: {str(e)}'}), 500
 
 @app.route('/api/datasets', methods=['GET'])
@@ -248,12 +344,15 @@ def list_datasets():
         datasets.append({
             'dataset_id': dataset_id,
             'shape': df.shape,
-            'columns': df.columns.tolist()
+            'columns': df.columns.tolist(),
+            'memory_usage': f"{df.memory_usage(deep=True).sum() / 1024:.1f} KB",
+            'missing_values': df.isnull().sum().sum()
         })
     
     return jsonify({
         'datasets': datasets,
-        'count': len(datasets)
+        'count': len(datasets),
+        'total_memory': sum(df.memory_usage(deep=True).sum() for df in uploaded_data.values()) / 1024
     })
 
 @app.errorhandler(413)
@@ -268,5 +367,26 @@ def not_found(e):
 def internal_error(e):
     return jsonify({'error': 'Internal server error'}), 500
 
+def start_server():
+    """Start the Flask development server"""
+    print("🚀 Starting Data Visualization Backend API...")
+    print("=" * 50)
+    print(f"🌐 Server will run on: http://localhost:5001")
+    print(f"📚 API Documentation: backend/api_docs.md")
+    print(f"🧪 Test API: python test_api.py")
+    print(f"🎨 Frontend: Open frontend.html in browser")
+    print("=" * 50)
+    
+    try:
+        app.run(debug=True, host='0.0.0.0', port=5001)
+    except KeyboardInterrupt:
+        print("\n👋 Server stopped by user")
+    except Exception as e:
+        print(f"❌ Server error: {e}")
+
 if __name__ == '__main__':
-    app.run(debug=True, host='0.0.0.0', port=5001)
+    # Setup environment and dependencies
+    setup_environment()
+    
+    # Start the server
+    start_server()
